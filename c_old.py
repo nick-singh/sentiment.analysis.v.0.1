@@ -7,8 +7,14 @@ import re
 import nltk
 import cPickle
 from nltk.corpus import stopwords
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.ensemble import RandomForestClassifier
+
+
+train = pd.read_csv("data-sets/labeledTrainData.tsv", header=0,delimiter="\t", quoting=3)
+
+# Read the test data
+test = pd.read_csv("data-sets/testData.tsv", header=0, delimiter='\t', quoting=3)
 
 
 
@@ -66,16 +72,9 @@ def dump_to_json(file_name_and_path, data):
 
 def dump_pickle_file(file_name_and_path, forest):
     print "Forest trained, dumping...."
-    with open(file_name_and_path, 'wb') as f:
+    with open('forest_dump/forest.pickle', 'wb') as f:
         cPickle.dump(forest, f)
     print "Forest dmuped!"
-
-def read_pickle_file(file_name_and_path):
-    print "Reading forest...."
-    with open(file_name_and_path, 'rb') as f:
-        forest = cPickle.load(f)    
-    print "Read complete!"
-    return forest
 
 
 def pandas_dataframe_to_json(dataframe):
@@ -95,6 +94,22 @@ def pandas_dataframe_to_json(dataframe):
 
 ######################### Uncommment If cleaning training data need to happen again ################################
 
+# Loads clean data to be trained
+# clean_train_reviews = json.load(open('data.json','r'))
+
+
+# Initialize the "CountVectorizer" object, which is scikit-learn's 
+# bag of words tool.
+vectorizer = CountVectorizer(analyzer="word", tokenizer = None, preprocessor = None, max_features = 5000)
+# 
+# fit_transform() does two functions: First , it transforms our training data 
+# and learns the vocabulary; second; it transfoms our tranining data 
+# into feature vectors. The input to fit_transform should be a list of strings
+
+# train_data_features = vectorizer.fit_transform(clean_train_reviews)
+
+# Numpy arrays are easy to work with, so convert the result to an array 
+# train_data_features = train_data_features.toarray()
 
 
 ###################################### Uncommment If training need to happen again ##########################################
@@ -112,3 +127,33 @@ def pandas_dataframe_to_json(dataframe):
 # dump_pickle_file('forest_dump/forest.pickle', forest)
 
 ###################################### Uncommment If training need to happen again ##########################################
+
+print "Reading forest...."
+with open('forest_dump/forest.pickle', 'rb') as f:
+    forest = cPickle.load(f)
+print "Read complete!"
+
+# Create an empty list and append the clean reviews one by one
+print "Cleaning and parsing the test set movie reviews...\n"
+
+clean_test_reviews = clean_list_of_words(test["review"])
+
+# Get a bag of words for the test set, and convert to a numpy array
+test_data_features = vectorizer.transform(clean_test_reviews)
+test_data_features = test_data_features.toarray()
+
+# Use the random forest to make sentiment label predictions
+result = forest.predict(test_data_features)
+
+# Copy the results to a pandas dataframe with an "id" column and
+# a "sentiment" column
+output = pd.DataFrame( data={"id":test["id"], "sentiment":result} )
+
+d = pandas_dataframe_to_json(output)
+
+with open('Bag_of_Words_model.json', 'w') as outfile:
+    json.dump(d, outfile)
+
+
+# Use pandas to write the comma-separated output file
+# output.to_json( "Bag_of_Words_model.json")
