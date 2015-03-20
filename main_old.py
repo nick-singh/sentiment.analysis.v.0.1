@@ -14,7 +14,7 @@ test = pd.read_csv("data-sets/testData.tsv", header=0, delimiter='\t', quoting=3
 print "Completed..."
 
 print "Loading tweets"
-tweets_data_path = 'data-sets/kim_k.json'
+tweets_data_path = 'data-sets/twitter_stream.json'
 
 tweets_data = []
 tweets_file = open(tweets_data_path, "r")
@@ -22,8 +22,7 @@ for line in tweets_file:
     try:
         tweet = json.loads(line)
         if tweet['id'] and tweet['text'] is not None:
-            if "rt" not in tweet['text']:                
-                tweets_data.append(tweet)
+            tweets_data.append(tweet)
     except:
         continue
 print "tweets loaded"

@@ -89,13 +89,13 @@ def pandas_dataframe_to_json(dataframe):
 
 ######################### Uncommment If cleaning training data need to happen again ################################
 
-# clean_train_reviewsclean_train_words = clean_list_of_words(train["review"])
-# dump_to_json("data.json")
+clean_train_reviews = clean_list_of_words(train["review"])
+dump_to_json("data.json",clean_train_reviews)
 
 ######################### Uncommment If cleaning training data need to happen again ################################
 
 # Loads clean data to be trained
-# clean_train_reviews = json.load(open('data.json','r'))
+clean_train_reviews = json.load(open('data.json','r'))
 
 
 # Initialize the "CountVectorizer" object, which is scikit-learn's 
@@ -106,25 +106,25 @@ vectorizer = CountVectorizer(analyzer="word", tokenizer = None, preprocessor = N
 # and learns the vocabulary; second; it transfoms our tranining data 
 # into feature vectors. The input to fit_transform should be a list of strings
 
-# train_data_features = vectorizer.fit_transform(clean_train_reviews)
+train_data_features = vectorizer.fit_transform(clean_train_reviews)
 
 # Numpy arrays are easy to work with, so convert the result to an array 
-# train_data_features = train_data_features.toarray()
+train_data_features = train_data_features.toarray()
 
 
 ###################################### Uncommment If training need to happen again ##########################################
 
-# print "Training the ramdom forest..."
-# # Initialize a Random Forest classifier with 100 trees
-# forest = RandomForestClassifier(n_estimators = 100) 
+print "Training the ramdom forest..."
+# Initialize a Random Forest classifier with 100 trees
+forest = RandomForestClassifier(n_estimators = 100) 
 
-# # Fit the forest to the training set, using the bag of words as 
-# # features and the sentiment labels as the response variable
-# #
-# # This may take a few minutes to run
-# forest = forest.fit( train_data_features, train["sentiment"] )
+# Fit the forest to the training set, using the bag of words as 
+# features and the sentiment labels as the response variable
+#
+# This may take a few minutes to run
+forest = forest.fit( train_data_features, train["sentiment"] )
 
-# dump_pickle_file('forest_dump/forest.pickle', forest)
+dump_pickle_file('forest_dump/forest.pickle', forest)
 
 ###################################### Uncommment If training need to happen again ##########################################
 

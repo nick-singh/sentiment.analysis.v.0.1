@@ -43,7 +43,7 @@ def review_to_words( raw_review ):
 def clean_list_of_words(list_of_words):
     
     # Get the number of reviews based on the datagrame column size
-    num_reviews = list_of_words.size
+    num_reviews = len(list_of_words)
     #
     # Initialize an empty list to hold the clean reviews
     clean_train_words = []
@@ -88,27 +88,3 @@ def pandas_dataframe_to_json(dataframe):
     ]
     return d
 
-######################### Uncommment If cleaning training data need to happen again ################################
-
-# clean_train_reviewsclean_train_words = clean_list_of_words(train["review"])
-# dump_to_json("data.json")
-
-######################### Uncommment If cleaning training data need to happen again ################################
-
-
-
-###################################### Uncommment If training need to happen again ##########################################
-
-# print "Training the ramdom forest..."
-# # Initialize a Random Forest classifier with 100 trees
-# forest = RandomForestClassifier(n_estimators = 100) 
-
-# # Fit the forest to the training set, using the bag of words as 
-# # features and the sentiment labels as the response variable
-# #
-# # This may take a few minutes to run
-# forest = forest.fit( train_data_features, train["sentiment"] )
-
-# dump_pickle_file('forest_dump/forest.pickle', forest)
-
-###################################### Uncommment If training need to happen again ##########################################
